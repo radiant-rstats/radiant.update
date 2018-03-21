@@ -1,0 +1,4 @@
+Name: Update radiant
+Description: Update radiant to the latest version
+Binding: radiant.update
+Interactive: true
