@@ -36,7 +36,7 @@ sapply(apps, rem_old)
 
 ## probably need to restart Rstudio before building
 ## avoid 'loaded namespace' stuff when building for mac
-system(paste0(Sys.which("R"), " -e \"source('radiant/build/build_mac.R')\""))
+system(paste0(Sys.which("R"), " -e \"source('radiant.update/build/build_mac.R')\""))
 
 win <- readline(prompt = "Did you build on Windows? y/n: ")
 if (grepl("[yY]", win)) {
@@ -60,5 +60,5 @@ if (grepl("[yY]", win)) {
   mess <- "Update"
   system(paste0("git commit -m '", mess, "'"))
   system("git push")
-  setwd("~/gh/radiant")
+  setwd("~/gh/radiant.update")
 }
