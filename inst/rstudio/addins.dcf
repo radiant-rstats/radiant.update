@@ -2,3 +2,8 @@ Name: Update radiant
 Description: Update radiant to the latest version
 Binding: radiant.update
 Interactive: true
+
+Name: Sync packages
+Description: Update packages to shared version
+Binding: sync_packages
+Interactive: true
