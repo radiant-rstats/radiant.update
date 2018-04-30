@@ -2,8 +2,8 @@
 #'
 #' @param lib.loc Library to install packages in (see .libPaths())
 #' @param repos Repo to update from (default is the radiant repo on GitHub)
-#' @param type Package type ("binary" or "source")
 #' @param dev If TRUE, add the radiant development repo to the repo list
+#' @param type Package type ("binary" or "source"). If missing, will try infer from OS type (i.e., "source" for linux, else "binary")
 #'
 #' @examples
 #' \dontrun{
@@ -16,8 +16,8 @@
 radiant.update <- function(
   lib.loc = .libPaths()[1],
   repos = "https://radiant-rstats.github.io/minicran/",
-  type,
-  dev = FALSE
+  dev = FALSE,
+  type
 ) {
 
   ## cleanup old session files
@@ -27,7 +27,7 @@ radiant.update <- function(
     message("Some packages are already loaded. Please restart R and run radiant.update::sync_packages() again")
   } else {
     if (dev) {
-      repo <- c(repo, "https://radiant-rstats.github.io/minicran/dev")
+      repos <- c(repos, "https://radiant-rstats.github.io/minicran/dev")
     }
     if (missing(type)) {
       os_type <- Sys.info()["sysname"]
@@ -39,6 +39,10 @@ radiant.update <- function(
       repos = repos,
       type = type
     )[, "Package"]
+
+    pkgs_inst <- installed.packages(lib.loc = lib.loc)[, "Version"]
+    pkgs_avail <- available.packages(repos = repos, type = type)[, "Version"]
+    to_install <- c(to_install, names(pkgs_avail[!names(pkgs_avail) %in% names(pkgs_inst)]))
 
     if (length(to_install) > 0) {
       to_install <- paste0("c(", paste0("\"", to_install, "\"", collapse = ", "), ")")
@@ -68,7 +72,6 @@ radiant.check <- function() {
     If update (sync) is still not successful, please send
     an email to radiant@rady.ucsd.edu with screen shots
     of the output shown in R(studio)."
-  # ret <- suppressPackageStartupMessages(require("radiant"))
   ret <- try(eval(parse(text = "suppressMessages(requireNamespace('radiant'))")), silent = TRUE)
   if (isTRUE(ret)) {
     message(success)
@@ -81,8 +84,8 @@ radiant.check <- function() {
 #'
 #' @param lib.loc Library to install packages in (see .libPaths())
 #' @param repos Repo to update from (default is the radiant repo on GitHub)
-#' @param type Package type ("binary" or "source")
 #' @param dev If TRUE, add the radiant development repo to the repo list
+#' @param type Package type ("binary" or "source"). If missing, will try infer from OS type (i.e., "source" for linux, else "binary")
 #'
 #' @examples
 #' \dontrun{
@@ -93,8 +96,8 @@ radiant.check <- function() {
 sync_packages <- function(
   lib.loc = .libPaths()[1],
   repos = "https://radiant-rstats.github.io/minicran/",
-  type,
-  dev = FALSE
+  dev = FALSE,
+  type
 ) {
 
   ## cleanup old session files
@@ -104,13 +107,15 @@ sync_packages <- function(
     message("Some packages are already loaded. Please restart R and run radiant.update::sync_packages() again")
   } else {
     if (dev) {
-      repo <- c(repo, "https://radiant-rstats.github.io/minicran/dev")
+      repos <- c(repos, "https://radiant-rstats.github.io/minicran/dev")
     }
     if (missing(type)) {
       os_type <- Sys.info()["sysname"]
       type <- ifelse(os_type %in% c("Windows", "Darwin"), "binary", "source")
     }
     pkgs_inst <- installed.packages(lib.loc = lib.loc)[, "Version"]
+    # type <- "binary"
+    # repos <- "https://radiant-rstats.github.io/minicran"
     pkgs_avail <- available.packages(repos = repos, type = type)[, "Version"]
     to_install <- names(pkgs_avail[!names(pkgs_avail) %in% names(pkgs_inst)])
     if (length(to_install) > 0) {

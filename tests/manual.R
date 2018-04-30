@@ -1,6 +1,7 @@
 # source('https://raw.githubusercontent.com/radiant-rstats/minicran/gh-pages/update.R')
 # install.packages("~/Desktop/tibble_1.2.tar.gz", repos = NULL, type = "source")
 # install.packages("//mac/Home/Desktop/tibble_1.2.tar.gz", repos = NULL, type = "source")
+# remove.packages("radiant.design")
 # library(tibble)
 # packageVersion("tibble")
 # radiant.update::radiant.update()

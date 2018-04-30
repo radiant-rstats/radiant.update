@@ -5,16 +5,16 @@
 \title{Sync packages to the version on the miniCRAN repo}
 \usage{
 sync_packages(lib.loc = .libPaths()[1],
-  repos = "https://radiant-rstats.github.io/minicran/", type, dev = FALSE)
+  repos = "https://radiant-rstats.github.io/minicran/", dev = FALSE, type)
 }
 \arguments{
 \item{lib.loc}{Library to install packages in (see .libPaths())}
 
 \item{repos}{Repo to update from (default is the radiant repo on GitHub)}
 
-\item{type}{Package type ("binary" or "source")}
-
 \item{dev}{If TRUE, add the radiant development repo to the repo list}
+
+\item{type}{Package type ("binary" or "source"). If missing, will try infer from OS type (i.e., "source" for linux, else "binary")}
 }
 \description{
 Sync packages to the version on the miniCRAN repo
