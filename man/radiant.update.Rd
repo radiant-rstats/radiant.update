@@ -7,7 +7,17 @@
 \alias{radiant.update}
 \title{radiant.update}
 \usage{
-radiant.update()
+radiant.update(lib.loc = .libPaths()[1],
+  repos = "https://radiant-rstats.github.io/minicran/", type, dev = FALSE)
+}
+\arguments{
+\item{lib.loc}{Library to install packages in (see .libPaths())}
+
+\item{repos}{Repo to update from (default is the radiant repo on GitHub)}
+
+\item{type}{Package type ("binary" or "source")}
+
+\item{dev}{If TRUE, add the radiant development repo to the repo list}
 }
 \description{
 radiant.update

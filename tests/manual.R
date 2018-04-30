@@ -1,0 +1,16 @@
+# source('https://raw.githubusercontent.com/radiant-rstats/minicran/gh-pages/update.R')
+# install.packages("~/Desktop/tibble_1.2.tar.gz", repos = NULL, type = "source")
+# install.packages("//mac/Home/Desktop/tibble_1.2.tar.gz", repos = NULL, type = "source")
+# library(tibble)
+# packageVersion("tibble")
+# radiant.update::radiant.update()
+# packageVersion("tibble")
+#
+# #install.packages("~/Desktop/tibble_1.2.tar.gz", repos = NULL, type = "source")
+# install.packages("//mac/Home/Desktop/tibble_1.2.tar.gz", repos = NULL, type = "source")
+# library(tibble)
+# radiant.update::sync_packages()
+#
+# install.packages("//mac/Home/Desktop/tibble_1.2.tar.gz", repos = NULL, type = "source")
+# library(radiant)
+# radiant.update::radiant.update()

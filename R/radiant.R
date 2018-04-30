@@ -1,51 +1,88 @@
 #' Update Radiant
 #'
+#' @param lib.loc Library to install packages in (see .libPaths())
+#' @param repos Repo to update from (default is the radiant repo on GitHub)
+#' @param type Package type ("binary" or "source")
+#' @param dev If TRUE, add the radiant development repo to the repo list
+#'
 #' @examples
 #' \dontrun{
 #' radiant.update::radiant.update()
 #' }
 #'
-#' @importFrom rstudioapi isAvailable restartSession versionInfo
-#' @importFrom methods is
+#' @importFrom utils old.packages
 #'
 #' @export
-radiant.update <- function() {
+radiant.update <- function(
+  lib.loc = .libPaths()[1],
+  repos = "https://radiant-rstats.github.io/minicran/",
+  type,
+  dev = FALSE
+) {
 
   ## cleanup old session files
   unlink("~/radiant.sessions/*.rds", force = TRUE)
 
-  ## command to run after R session is restarted
-  cmd <- "source('https://raw.githubusercontent.com/radiant-rstats/minicran/gh-pages/update.R')"
-  mess <- paste0("Some packages are already loaded. Please restart R (Rstudio) and run radiant.update::radiant.update() again")
-
-  if (length(search()) < 11) {
-    ret <- try(source('https://raw.githubusercontent.com/radiant-rstats/minicran/gh-pages/update.R'), silent = FALSE)
-    if (is(ret, "try-error")) {
-      message(mess)
-    }
+  if (is.null(Sys.getenv("RSTUDIO")) && (length(search()) > 10)) {
+    message("Some packages are already loaded. Please restart R and run radiant.update::sync_packages() again")
   } else {
-    ## check if run from Rstudio
-    if (rstudioapi::isAvailable()) {
-      message("\nUpdating packages. Your R session will now restart ...")
-      ## Restarting Rstudio session from http://stackoverflow.com/a/25934774/1974918
-
-      ## Important issue: Restart no longer clears as per issue #95
-      ## https://github.com/rstudio/rstudioapi/issues/95
-      if (rstudioapi::versionInfo()$version >= "1.1.383") {
-        rstudioapi::restartSession(cmd)
-      } else {
-        ret <- .rs.restartR(cmd)
-      }
-    } else {
-      message(mess)
+    if (dev) {
+      repo <- c(repo, "https://radiant-rstats.github.io/minicran/dev")
     }
+    if (missing(type)) {
+      os_type <- Sys.info()["sysname"]
+      type <- ifelse(os_type %in% c("Windows", "Darwin"), "binary", "source")
+    }
+    # ret <- try(source('https://raw.githubusercontent.com/radiant-rstats/minicran/gh-pages/update.R'), silent = FALSE)
+    to_install <- old.packages(
+      lib.loc = lib.loc,
+      repos = repos,
+      type = type
+    )[, "Package"]
+
+    if (length(to_install) > 0) {
+      to_install <- paste0("c(", paste0("\"", to_install, "\"", collapse = ", "), ")")
+      ## needed in case Rstudio wants to restart because package is loaded
+      to_run <- paste0(
+        "install.packages(",
+        to_install, ", lib = ",
+        deparse(lib.loc), ", repos = ",
+        deparse(repos, control = "keepNA", width.cutoff = 500L), ", type = ",
+        deparse(type),
+        ")"
+      )
+      to_run <- try(eval(parse(text = to_run)), silent = TRUE)
+    } else {
+      message("Nothing to update")
+    }
+  }
+}
+
+radiant.check <- function() {
+  message('\nTesting if Radiant can be loaded ...')
+  success <- "\nRadiant update was successfull\n"
+  failure <- "
+    Radiant update attempt was unsuccessful. Please run
+    the update (radiant.update::radiant.update()) or
+    sync (radiant.update::sync_packages()) command again.
+    If update (sync) is still not successful, please send
+    an email to radiant@rady.ucsd.edu with screen shots
+    of the output shown in R(studio)."
+  # ret <- suppressPackageStartupMessages(require("radiant"))
+  ret <- try(eval(parse(text = "suppressMessages(requireNamespace('radiant'))")), silent = TRUE)
+  if (isTRUE(ret)) {
+    message(success)
+  } else {
+    message(failure)
   }
 }
 
 #' Sync packages to the version on the miniCRAN repo
 #'
-#' @param lib.loc Library to install packages in
-#' @param type Package type
+#' @param lib.loc Library to install packages in (see .libPaths())
+#' @param repos Repo to update from (default is the radiant repo on GitHub)
+#' @param type Package type ("binary" or "source")
+#' @param dev If TRUE, add the radiant development repo to the repo list
 #'
 #' @examples
 #' \dontrun{
@@ -53,40 +90,39 @@ radiant.update <- function() {
 #' }
 #'
 #' @export
-sync_packages <- function(lib.loc = .libPaths()[1], type) {
+sync_packages <- function(
+  lib.loc = .libPaths()[1],
+  repos = "https://radiant-rstats.github.io/minicran/",
+  type,
+  dev = FALSE
+) {
 
   ## cleanup old session files
   unlink("~/radiant.sessions/*.rds", force = TRUE)
-  # repos <- c(
-  #   "https://radiant-rstats.github.io/minicran/",
-  #   "https://radiant-rstats.github.io/minicran/dev"
-  # )
-  repos <- "https://radiant-rstats.github.io/minicran/"
-  if (length(search()) > 10) {
-    message("Some packages are already loaded. Please restart R (Rstudio) and run radiant.update::sync_packages() again")
+
+  if (is.null(Sys.getenv("RSTUDIO")) && (length(search()) > 10)) {
+    message("Some packages are already loaded. Please restart R and run radiant.update::sync_packages() again")
   } else {
+    if (dev) {
+      repo <- c(repo, "https://radiant-rstats.github.io/minicran/dev")
+    }
     if (missing(type)) {
       os_type <- Sys.info()["sysname"]
       type <- ifelse(os_type %in% c("Windows", "Darwin"), "binary", "source")
     }
-
     pkgs_inst <- installed.packages(lib.loc = lib.loc)[, "Version"]
     pkgs_avail <- available.packages(repos = repos, type = type)[, "Version"]
     to_install <- names(pkgs_avail[!names(pkgs_avail) %in% names(pkgs_inst)])
-    to_install
     if (length(to_install) > 0) {
-      # install.packages(to_install, lib = lib.loc, repos = repos, type = type)
+      ## needed in case Rstudio wants to restart because package is loaded
+      to_install <- paste0("c(", paste0("\"", to_install, "\"", collapse = ", "), ")")
       to_run <- paste0(
-        "install.packages(",
-        deparse(to_install, control = "keepNA", width.cutoff = 500L), ", lib = ",
-        deparse(lib.loc), ", repos = ",
-        deparse(repos, control = "keepNA", width.cutoff = 500L), ", type = ",
-        deparse(type),
-        ")"
+        "install.packages(", to_install,
+        ", lib = ", deparse(lib.loc),
+        ", repos = ", deparse(repos, control = "keepNA", width.cutoff = 500L),
+        ", type = \"", type, "\")"
       )
-      # cat(to_run)
       try(eval(parse(text = to_run)), silent = TRUE)
-      # eval(parse(text = to_run))
     }
 
     ## updating pkgs_installed list
@@ -102,18 +138,16 @@ sync_packages <- function(lib.loc = .libPaths()[1], type) {
     names(to_sync) <- pkgs_comp$pkgs
     to_sync <- names(to_sync[to_sync != 0])
     if (length(to_sync) > 0) {
-      # install.packages(to_sync, lib = lib.loc, repos = repos, type = type)
+      ## needed in case Rstudio wants to restart because package is loaded
+      to_sync <- paste0("c(", paste0("\"", to_sync, "\"", collapse = ", "), ")")
       to_run <- paste0(
         "install.packages(",
-        deparse(to_sync, control = "keepNA", width.cutoff = 500L), ", lib = ",
-        deparse(lib.loc), ", repos = ",
-        deparse(repos, control = "keepNA", width.cutoff = 500L), ", type = ",
-        deparse(type),
-        ")"
+        to_sync,
+        ", lib = ", deparse(lib.loc),
+        ", repos = ", deparse(repos, control = "keepNA", width.cutoff = 500L),
+        ", type = ", deparse(type), ")"
       )
-      # cat(to_run)
       try(eval(parse(text = to_run)), silent = TRUE)
-      # eval(parse(text = to_run))
     }
   }
 }

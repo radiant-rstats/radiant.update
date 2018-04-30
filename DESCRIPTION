@@ -1,15 +1,15 @@
 Package: radiant.update
 Type: Package
-Title: Business Analytics using R and Shiny
-Version: 0.3
-Date: 2018-4-23
+Title: Update Radiant Packages
+Version: 0.4
+Date: 2018-4-30
 Authors@R: person("Vincent", "Nijs", , "radiant@rady.ucsd.edu", c("aut", "cre"))
-Description: Update Radiant and all required packages.
+Description: Update and Sync Radiant and all required packages.
 Depends:
     R (>= 3.4.0)
 Imports:
-    import (>= 1.1.0),
-    rstudioapi (>= 0.7),
+    utils,
+    import,
     methods
 Suggests:
     testthat (>= 2.0.0)
