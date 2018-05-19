@@ -23,6 +23,9 @@ radiant.update <- function(
   ## cleanup old session files
   unlink("~/radiant.sessions/*.rds", force = TRUE)
 
+  ## https://stackoverflow.com/questions/50422627/different-results-from-deparse-in-r-3-4-4-and-r-3-5
+  dctrl <- if (getRversion() > "3.4.4") c("keepNA", "niceNames") else "keepNA"
+
   if (is.null(Sys.getenv("RSTUDIO")) && (length(search()) > 10)) {
     message("Some packages are already loaded. Please restart R and run radiant.update::sync_packages() again")
   } else {
@@ -33,7 +36,6 @@ radiant.update <- function(
       os_type <- Sys.info()["sysname"]
       type <- ifelse(os_type %in% c("Windows", "Darwin"), "binary", "source")
     }
-    # ret <- try(source('https://raw.githubusercontent.com/radiant-rstats/minicran/gh-pages/update.R'), silent = FALSE)
     to_install <- old.packages(
       lib.loc = lib.loc,
       repos = repos,
@@ -51,7 +53,7 @@ radiant.update <- function(
         "install.packages(",
         to_install, ", lib = ",
         deparse(lib.loc), ", repos = ",
-        deparse(repos, control = "keepNA", width.cutoff = 500L), ", type = ",
+        deparse(repos, control = dctrl, width.cutoff = 500L), ", type = ",
         deparse(type),
         ")"
       )
@@ -103,6 +105,9 @@ sync_packages <- function(
   ## cleanup old session files
   unlink("~/radiant.sessions/*.rds", force = TRUE)
 
+  ## https://stackoverflow.com/questions/50422627/different-results-from-deparse-in-r-3-4-4-and-r-3-5
+  dctrl <- if (getRversion() > "3.4.4") c("keepNA", "niceNames") else "keepNA"
+
   if (is.null(Sys.getenv("RSTUDIO")) && (length(search()) > 10)) {
     message("Some packages are already loaded. Please restart R and run radiant.update::sync_packages() again")
   } else {
@@ -114,8 +119,6 @@ sync_packages <- function(
       type <- ifelse(os_type %in% c("Windows", "Darwin"), "binary", "source")
     }
     pkgs_inst <- installed.packages(lib.loc = lib.loc)[, "Version"]
-    # type <- "binary"
-    # repos <- "https://radiant-rstats.github.io/minicran"
     pkgs_avail <- available.packages(repos = repos, type = type)[, "Version"]
     to_install <- names(pkgs_avail[!names(pkgs_avail) %in% names(pkgs_inst)])
     if (length(to_install) > 0) {
@@ -124,7 +127,7 @@ sync_packages <- function(
       to_run <- paste0(
         "install.packages(", to_install,
         ", lib = ", deparse(lib.loc),
-        ", repos = ", deparse(repos, control = "keepNA", width.cutoff = 500L),
+        ", repos = ", deparse(repos, control = dctrl, width.cutoff = 500L),
         ", type = \"", type, "\")"
       )
       try(eval(parse(text = to_run)), silent = TRUE)
@@ -149,7 +152,7 @@ sync_packages <- function(
         "install.packages(",
         to_sync,
         ", lib = ", deparse(lib.loc),
-        ", repos = ", deparse(repos, control = "keepNA", width.cutoff = 500L),
+        ", repos = ", deparse(repos, control = dctrl, width.cutoff = 500L),
         ", type = ", deparse(type), ")"
       )
       try(eval(parse(text = to_run)), silent = TRUE)
