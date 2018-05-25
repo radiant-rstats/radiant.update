@@ -5,7 +5,7 @@ globalVariables(".rs.restartR")
 #' @name radiant.update
 #' @docType package
 #' @importFrom import from
-#' @importFrom utils new.packages available.packages installed.packages compareVersion
+#' @importFrom utils new.packages available.packages installed.packages compareVersion sessionInfo
 #' @importFrom methods is
 #'
 NULL

@@ -26,7 +26,10 @@ radiant.update <- function(
   ## https://stackoverflow.com/questions/50422627/different-results-from-deparse-in-r-3-4-4-and-r-3-5
   dctrl <- if (getRversion() > "3.4.4") c("keepNA", "niceNames") else "keepNA"
 
-  if (is.null(Sys.getenv("RSTUDIO")) && (length(search()) > 10)) {
+  ## unload pkgs if needed
+  unload_pkgs()
+
+  if (is.null(Sys.getenv("RSTUDIO")) && length(sessionInfo()$otherPkgs) > 0) {
     message("Some packages are already loaded. Please restart R and run radiant.update::sync_packages() again")
   } else {
     if (dev) {
@@ -55,7 +58,7 @@ radiant.update <- function(
         deparse(lib.loc), ", repos = ",
         deparse(repos, control = dctrl, width.cutoff = 500L), ", type = ",
         deparse(type),
-        ")"
+        "); radiant.check()"
       )
       to_run <- try(eval(parse(text = to_run)), silent = TRUE)
     } else {
@@ -64,13 +67,29 @@ radiant.update <- function(
   }
 }
 
+## based on https://rtask.thinkr.fr/blog/our-shiny-template-to-design-a-prod-ready-app/?noredirect=en_US
+unload_pkgs <- function() {
+  ops <- sessionInfo()$otherPkgs
+  if (length(ops) > 0) {
+    suppressWarnings(
+      sapply(
+        paste0("package:", names(ops)),
+        detach,
+        character.only = TRUE,
+        unload = TRUE
+      )
+    )
+  }
+}
+
+#' Check if the radiant package can be loaded
+#' @export
 radiant.check <- function() {
   message('\nTesting if Radiant can be loaded ...')
   success <- "\nRadiant update was successfull\n"
-  failure <- "
-    Radiant update attempt was unsuccessful. Please run
-    the update (radiant.update::radiant.update()) or
-    sync (radiant.update::sync_packages()) command again.
+  failure <- "Radiant update attempt was unsuccessful. Please restart
+    R(studio) and run the update (radiant.update::radiant.update())
+    or sync (radiant.update::sync_packages()) command again.
     If update (sync) is still not successful, please send
     an email to radiant@rady.ucsd.edu with screen shots
     of the output shown in R(studio)."
@@ -108,7 +127,10 @@ sync_packages <- function(
   ## https://stackoverflow.com/questions/50422627/different-results-from-deparse-in-r-3-4-4-and-r-3-5
   dctrl <- if (getRversion() > "3.4.4") c("keepNA", "niceNames") else "keepNA"
 
-  if (is.null(Sys.getenv("RSTUDIO")) && (length(search()) > 10)) {
+  ## unload pkgs if needed
+  unload_pkgs()
+
+  if (is.null(Sys.getenv("RSTUDIO")) && length(sessionInfo()$otherPkgs) > 0) {
     message("Some packages are already loaded. Please restart R and run radiant.update::sync_packages() again")
   } else {
     if (dev) {
@@ -157,6 +179,7 @@ sync_packages <- function(
       )
       try(eval(parse(text = to_run)), silent = TRUE)
     }
+    radiant.check()
   }
 }
 
