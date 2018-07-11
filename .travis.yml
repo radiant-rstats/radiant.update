@@ -15,7 +15,7 @@ matrix:
     sudo: required
     r: devel
   - os: osx
-    r: devel
+    r: oldrel
   - os: osx
     r: release
   - os: osx
