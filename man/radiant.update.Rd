@@ -4,11 +4,11 @@
 \name{radiant.update}
 \alias{radiant.update}
 \alias{radiant.update-package}
+\alias{radiant.update}
 \title{radiant.update}
 \usage{
 radiant.update(lib.loc = .libPaths()[1],
-  repos = "https://radiant-rstats.github.io/minicran/", dev = FALSE,
-  type)
+  repos = "https://radiant-rstats.github.io/minicran/", dev = FALSE, type)
 }
 \arguments{
 \item{lib.loc}{Library to install packages in (see .libPaths())}
