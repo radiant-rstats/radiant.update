@@ -1,0 +1,18 @@
+language: r
+r:
+  - oldrel
+  - release
+  - devel
+
+matrix:
+  include:
+  - os: linux
+    dist: trusty
+    sudo: required
+  - os: osx
+
+warnings_are_errors: true
+
+install:
+  - Rscript -e "install.packages('radiant.update', repos = 'https://radiant-rstats.github.io/minicran/')"
+  - Rscript -e "radiant.update::radiant.update()"
