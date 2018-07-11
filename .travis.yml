@@ -1,15 +1,25 @@
 language: r
-r:
-  - oldrel
-  - release
-  - devel
 
 matrix:
   include:
   - os: linux
     dist: trusty
     sudo: required
+    r: oldrel
+  - os: linux
+    dist: trusty
+    sudo: required
+    r: release
+  - os: linux
+    dist: trusty
+    sudo: required
+    r: devel
   - os: osx
+    r: devel
+  - os: osx
+    r: release
+  - os: osx
+    r: devel
 
 warnings_are_errors: true
 
