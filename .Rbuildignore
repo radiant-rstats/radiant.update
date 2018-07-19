@@ -3,3 +3,4 @@
 ^\.travis\.yml$
 ^.*\.sublime-project$
 ^appveyor\.yml$
+radiant.update.code-workspace

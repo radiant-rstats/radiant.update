@@ -3,7 +3,6 @@
 export(radiant.check)
 export(radiant.update)
 export(sync_packages)
-importFrom(import,from)
 importFrom(utils,available.packages)
 importFrom(utils,compareVersion)
 importFrom(utils,installed.packages)

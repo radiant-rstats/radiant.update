@@ -10,8 +10,6 @@
 #' radiant.update::radiant.update()
 #' }
 #'
-#' @importFrom utils old.packages
-#'
 #' @export
 radiant.update <- function(
   lib.loc = .libPaths()[1],
@@ -30,7 +28,7 @@ radiant.update <- function(
   unload_pkgs()
 
   if (is.null(Sys.getenv("RSTUDIO")) && length(sessionInfo()$otherPkgs) > 0) {
-    message("Some packages are already loaded. Please restart R and run radiant.update::sync_packages() again")
+    message("Some packages are already loaded. Please restart R and run radiant.update::radiant.update() again")
   } else {
     if (dev) {
       repos <- c(repos, "https://radiant-rstats.github.io/minicran/dev")
@@ -69,11 +67,11 @@ radiant.update <- function(
 
 ## based on https://rtask.thinkr.fr/blog/our-shiny-template-to-design-a-prod-ready-app/?noredirect=en_US
 unload_pkgs <- function() {
-  ops <- sessionInfo()$otherPkgs
-  if (length(ops) > 0) {
+  ops <- function() sessionInfo()$otherPkgs
+  if (length(ops()) > 0) {
     suppressWarnings(
       sapply(
-        paste0("package:", names(ops)),
+        paste0("package:", names(ops())),
         detach,
         character.only = TRUE,
         unload = TRUE
@@ -86,18 +84,11 @@ unload_pkgs <- function() {
 #' @export
 radiant.check <- function() {
   message('\nTesting if Radiant can be loaded ...')
-  success <- "\nRadiant update was successfull\n"
-  failure <- "Radiant update attempt was unsuccessful. Please restart
-    R(studio) and run the update (radiant.update::radiant.update())
-    or sync (radiant.update::sync_packages()) command again.
-    If update (sync) is still not successful, please send
-    an email to radiant@rady.ucsd.edu with screen shots
-    of the output shown in R(studio)."
   ret <- try(eval(parse(text = "suppressMessages(requireNamespace('radiant'))")), silent = TRUE)
   if (isTRUE(ret)) {
-    message(success)
+    message("\nRadiant update was successfull\n")
   } else {
-    message(failure)
+    message("\nRadiant update attempt was unsuccessful. Please restart R(studio) and run the update (radiant.update::radiant.update()) or sync (radiant.update::sync_packages()) command again. If update (sync) is still not successful, please send an email to radiant@rady.ucsd.edu with screen shots of the output shown in R(studio).")
   }
 }
 
