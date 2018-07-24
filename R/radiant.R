@@ -66,6 +66,8 @@ radiant.update <- function(
 }
 
 ## based on https://rtask.thinkr.fr/blog/our-shiny-template-to-design-a-prod-ready-app/?noredirect=en_US
+#' Unload packages
+#' @export
 unload_pkgs <- function() {
   ops <- function() sessionInfo()$otherPkgs
   if (length(ops()) > 0) {
@@ -77,6 +79,22 @@ unload_pkgs <- function() {
         unload = TRUE
       )
     )
+  }
+
+  unload_namespaces <- function(lo) {
+    ret <- sapply(
+      setdiff(names(lo), c("radiant.update", "compiler", "tools", "packrat")),
+      function(x) try(unloadNamespace(x), silent = TRUE)
+    )
+    lor <- lo()
+    if (length(lor) > 4) {
+      unload_namespaces(lor)
+    }
+  }
+
+  lo <- function() sessionInfo()$loadedOnly
+  if (length(lo()) > 4) {
+    unload_namespaces(lo)
   }
 }
 
