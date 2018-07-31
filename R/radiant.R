@@ -81,21 +81,21 @@ unload_pkgs <- function() {
     )
   }
 
-  unload_namespaces <- function(lo) {
-    ret <- sapply(
-      setdiff(names(lo), c("radiant.update", "compiler", "tools", "packrat")),
-      function(x) try(unloadNamespace(x), silent = TRUE)
-    )
-    lor <- lo()
-    if (length(lor) > 4) {
-      unload_namespaces(lor)
-    }
-  }
-
-  lo <- function() sessionInfo()$loadedOnly
-  if (length(lo()) > 4) {
-    unload_namespaces(lo)
-  }
+  # unload_namespaces <- function(lo) {
+  #   ret <- sapply(
+  #     setdiff(names(lo), c("radiant.update", "compiler", "tools", "packrat")),
+  #     function(x) try(unloadNamespace(x), silent = TRUE)
+  #   )
+  #   lor <- lo()
+  #   if (length(lor) > 4) {
+  #     unload_namespaces(lor)
+  #   }
+  # }
+  #
+  # lo <- function() sessionInfo()$loadedOnly
+  # if (length(lo()) > 4) {
+  #   unload_namespaces(lo)
+  # }
 }
 
 #' Check if the radiant package can be loaded
