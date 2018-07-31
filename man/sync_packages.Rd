@@ -5,7 +5,8 @@
 \title{Sync packages to the version on the miniCRAN repo}
 \usage{
 sync_packages(lib.loc = .libPaths()[1],
-  repos = "https://radiant-rstats.github.io/minicran/", dev = FALSE, type)
+  repos = "https://radiant-rstats.github.io/minicran/", dev = FALSE,
+  type)
 }
 \arguments{
 \item{lib.loc}{Library to install packages in (see .libPaths())}
