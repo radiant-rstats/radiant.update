@@ -23,6 +23,13 @@ matrix:
 
 warnings_are_errors: true
 
-install:
-  - Rscript -e "install.packages('radiant.update', repos = 'https://radiant-rstats.github.io/minicran/')"
-  - Rscript -e "radiant.update::radiant.update()"
+r_packages:
+  - testthat
+
+after_success:
+  - Rscript -e 'radiant.update::radiant.update()'
+
+# install:
+#  - Rscript -e "install.packages('radiant.update', repos = 'https://radiant-rstats.github.io/minicran/')"
+#  - Rscript -e "install.packages('radiant.update', repos = 'https://radiant-rstats.github.io/minicran/')"
+#  - Rscript -e "radiant.update::radiant.update()"
