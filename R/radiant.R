@@ -104,7 +104,7 @@ radiant.check <- function() {
   message('\nTesting if Radiant can be loaded ...')
   ret <- try(eval(parse(text = "suppressMessages(requireNamespace('radiant'))")), silent = TRUE)
   if (isTRUE(ret)) {
-    message("\nRadiant update was successfull\n")
+    message("\nRadiant update was successful\n")
   } else {
     message("\nRadiant update attempt was unsuccessful. Please restart R(studio) and run the update (radiant.update::radiant.update()) or sync (radiant.update::sync_packages()) command again. If update (sync) is still not successful, please send an email to radiant@rady.ucsd.edu with screen shots of the output shown in R(studio).")
   }
