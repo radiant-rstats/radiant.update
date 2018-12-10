@@ -18,8 +18,10 @@ radiant.update <- function(
   type
 ) {
 
+  ## remove old sessions directory
+  unlink("~/radiant.sessions", recursive = TRUE, force = TRUE)
   ## cleanup old session files
-  unlink("~/radiant.sessions/*.rds", force = TRUE)
+  unlink("~/.radiant.sessions/*.rds", force = TRUE)
 
   ## https://stackoverflow.com/questions/50422627/different-results-from-deparse-in-r-3-4-4-and-r-3-5
   dctrl <- if (getRversion() > "3.4.4") c("keepNA", "niceNames") else "keepNA"
@@ -61,6 +63,8 @@ radiant.update <- function(
       to_run <- try(eval(parse(text = to_run)), silent = TRUE)
     } else {
       message("Nothing to update")
+      # rpkgs <- installed.packages()[,"Package"]
+      # sapply(rpkgs[grepl("radiant", rpkgs)], packageVersion)
     }
   }
 }
@@ -130,8 +134,10 @@ sync_packages <- function(
   type
 ) {
 
+  ## remove old sessions directory
+  unlink("~/radiant.sessions", recursive = TRUE, force = TRUE)
   ## cleanup old session files
-  unlink("~/radiant.sessions/*.rds", force = TRUE)
+  unlink("~/.radiant.sessions/*.rds", force = TRUE)
 
   ## https://stackoverflow.com/questions/50422627/different-results-from-deparse-in-r-3-4-4-and-r-3-5
   dctrl <- if (getRversion() > "3.4.4") c("keepNA", "niceNames") else "keepNA"
