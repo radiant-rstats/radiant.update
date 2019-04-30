@@ -45,9 +45,15 @@ radiant.update <- function(
       type = type
     )[, "Package"]
 
-    pkgs_inst <- installed.packages(lib.loc = lib.loc)[, "Version"]
     pkgs_avail <- available.packages(repos = repos, type = type)[, "Version"]
-    to_install <- c(to_install, names(pkgs_avail[!names(pkgs_avail) %in% names(pkgs_inst)]))
+    if (length(pkgs_avail) == 0) {
+      ## may occur when a new version of R comes out
+      repos <- "https://cloud.r-project.org/"
+      to_install <- unique(c(to_install, "radiant"))
+    } else {
+      pkgs_inst <- installed.packages(lib.loc = lib.loc)[, "Version"]
+      to_install <- c(to_install, names(pkgs_avail[!names(pkgs_avail) %in% names(pkgs_inst)]))
+    }
 
     if (length(to_install) > 0) {
       to_install <- paste0("c(", paste0("\"", to_install, "\"", collapse = ", "), ")")
@@ -84,22 +90,6 @@ unload_pkgs <- function() {
       )
     )
   }
-
-  # unload_namespaces <- function(lo) {
-  #   ret <- sapply(
-  #     setdiff(names(lo), c("radiant.update", "compiler", "tools", "packrat")),
-  #     function(x) try(unloadNamespace(x), silent = TRUE)
-  #   )
-  #   lor <- lo()
-  #   if (length(lor) > 4) {
-  #     unload_namespaces(lor)
-  #   }
-  # }
-  #
-  # lo <- function() sessionInfo()$loadedOnly
-  # if (length(lo()) > 4) {
-  #   unload_namespaces(lo)
-  # }
 }
 
 #' Check if the radiant package can be loaded
@@ -155,9 +145,17 @@ sync_packages <- function(
       os_type <- Sys.info()["sysname"]
       type <- ifelse(os_type %in% c("Windows", "Darwin"), "binary", "source")
     }
-    pkgs_inst <- installed.packages(lib.loc = lib.loc)[, "Version"]
+
     pkgs_avail <- available.packages(repos = repos, type = type)[, "Version"]
-    to_install <- names(pkgs_avail[!names(pkgs_avail) %in% names(pkgs_inst)])
+    if (length(pkgs_avail) == 0) {
+      ## may occur when a new version of R comes out
+      repos <- "https://cloud.r-project.org/"
+      to_install <- "radiant"
+    } else {
+      pkgs_inst <- installed.packages(lib.loc = lib.loc)[, "Version"]
+      to_install <- c(to_install, names(pkgs_avail[!names(pkgs_avail) %in% names(pkgs_inst)]))
+    }
+
     if (length(to_install) > 0) {
       ## needed in case Rstudio wants to restart because package is loaded
       to_install <- paste0("c(", paste0("\"", to_install, "\"", collapse = ", "), ")")
