@@ -21,6 +21,7 @@ if (rv == "3.3") {
 }
 
 dirwin <- file.path("../minicran/bin/windows/contrib", rv)
+dirwin
 
 if (!file.exists(dirsrc)) dir.create(dirsrc, recursive = TRUE)
 if (!file.exists(dirmac)) dir.create(dirmac, recursive = TRUE)

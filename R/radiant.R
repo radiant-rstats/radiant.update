@@ -153,7 +153,7 @@ sync_packages <- function(
       to_install <- "radiant"
     } else {
       pkgs_inst <- installed.packages(lib.loc = lib.loc)[, "Version"]
-      to_install <- c(to_install, names(pkgs_avail[!names(pkgs_avail) %in% names(pkgs_inst)]))
+      to_install <- names(pkgs_avail[!names(pkgs_avail) %in% names(pkgs_inst)])
     }
 
     if (length(to_install) > 0) {

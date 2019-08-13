@@ -9,7 +9,9 @@ if (grepl("[nN]", rvprompt))
 ## build for windows
 setwd(rstudioapi::getActiveProject())
 app <- basename(getwd())
-path <- "../"
+path <- normalizePath("../", winslash = "/")
+path <- sub("\\\\\\\\Mac/Home","Z:", path)
+path
 devtools::install(file.path(path, app))
 f <- devtools::build(file.path(path, app))
 curr <- getwd(); setwd(path)
