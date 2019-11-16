@@ -211,12 +211,13 @@ user_packages <- function() {
   ipn <- c()
   if (dir.exists(local)) {
     ip <- installed.packages()
-    ipn <- names(ip[,"Package"])[ip[,"LibPath"] == local]
-    ipv <- ip[,"Version"][ip[,"LibPath"] == local]
+    ipl <- ip[,"LibPath"] == normalizePath(local)
+    ipn <- names(ip[,"Package"])[ipl]
     if (length(ipn) == 0) {
       cat("No user-level local R-packages installed")
     } else {
       cat("The following packages are installed locally at the user level\n")
+      ipv <- ip[,"Version"][ipl]
       cat(paste0(ipn, "_", ipv, collapse = "\n"))
     }
   } else {
@@ -232,3 +233,5 @@ remove_user_packages <- function() {
   up <- user_packages()
   remove.packages(up$packages, up$local)
 }
+
+user_packages()
