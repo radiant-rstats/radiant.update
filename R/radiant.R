@@ -231,7 +231,12 @@ user_packages <- function() {
 #' @export
 remove_user_packages <- function() {
   up <- user_packages()
-  remove.packages(up$packages, up$local)
+  if (length(up$packages) == 0) {
+    cat("\nNo user-level local R-packages to remove")
+  } else {
+    cat("\nUser-level local R-packages were removed")
+    remove.packages(up$packages, up$local)
+  }
 }
 
 user_packages()
