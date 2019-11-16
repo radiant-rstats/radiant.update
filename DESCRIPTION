@@ -1,12 +1,12 @@
 Package: radiant.update
 Type: Package
 Title: Update Radiant Packages
-Version: 1.1.0
-Date: 2019-9-5
+Version: 1.2.0
+Date: 2019-11-15
 Authors@R: person("Vincent", "Nijs", , "radiant@rady.ucsd.edu", c("aut", "cre"))
 Description: Update and Sync Radiant and all required packages.
 Depends:
-    R (>= 3.4.0)
+    R (>= 3.5.0)
 Imports:
     utils,
     import

@@ -2,7 +2,6 @@
 #'
 #' @param lib.loc Library to install packages in (see .libPaths())
 #' @param repos Repo to update from (default is the radiant repo on GitHub)
-#' @param dev If TRUE, add the radiant development repo to the repo list
 #' @param type Package type ("binary" or "source"). If missing, will try infer from OS type (i.e., "source" for linux, else "binary")
 #'
 #' @examples
@@ -13,15 +12,23 @@
 #' @export
 radiant.update <- function(
   lib.loc = .libPaths()[1],
-  repos = "https://radiant-rstats.github.io/minicran/",
-  dev = FALSE,
+  repos = "",
   type
 ) {
+
+  if (repos == "") {
+    os <- Sys.info()["sysname"]
+    if (os == "Linux") {
+      repos <- "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/bionic/latest"
+    } else {
+      repos <- "https://radiant-rstats.github.io/minicran/"
+    }
+  }
 
   ## remove old sessions directory
   unlink("~/radiant.sessions", recursive = TRUE, force = TRUE)
   ## cleanup old session files
-  unlink("~/.radiant.sessions/*.rds", force = TRUE)
+  unlink("~/.radiant.sessions/*.state.rda", force = TRUE)
 
   ## https://stackoverflow.com/questions/50422627/different-results-from-deparse-in-r-3-4-4-and-r-3-5
   dctrl <- if (getRversion() > "3.4.4") c("keepNA", "niceNames") else "keepNA"
@@ -32,9 +39,6 @@ radiant.update <- function(
   if (is.null(Sys.getenv("RSTUDIO")) && length(sessionInfo()$otherPkgs) > 0) {
     message("Some packages are already loaded. Please restart R and run radiant.update::radiant.update() again")
   } else {
-    if (dev) {
-      repos <- c(repos, "https://radiant-rstats.github.io/minicran/dev")
-    }
     if (missing(type)) {
       os_type <- Sys.info()["sysname"]
       type <- ifelse(os_type %in% c("Windows", "Darwin"), "binary", "source")
@@ -69,8 +73,6 @@ radiant.update <- function(
       to_run <- try(eval(parse(text = to_run)), silent = TRUE)
     } else {
       message("Nothing to update")
-      # rpkgs <- installed.packages()[,"Package"]
-      # sapply(rpkgs[grepl("radiant", rpkgs)], packageVersion)
     }
   }
 }
@@ -108,7 +110,6 @@ radiant.check <- function() {
 #'
 #' @param lib.loc Library to install packages in (see .libPaths())
 #' @param repos Repo to update from (default is the radiant repo on GitHub)
-#' @param dev If TRUE, add the radiant development repo to the repo list
 #' @param type Package type ("binary" or "source"). If missing, will try infer from OS type (i.e., "source" for linux, else "binary")
 #'
 #' @examples
@@ -119,15 +120,23 @@ radiant.check <- function() {
 #' @export
 sync_packages <- function(
   lib.loc = .libPaths()[1],
-  repos = "https://radiant-rstats.github.io/minicran/",
-  dev = FALSE,
+  repos = "",
   type
 ) {
+
+  if (repos == "") {
+    os <- Sys.info()["sysname"]
+    if (os == "Linux") {
+      repos <- "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/bionic/latest"
+    } else {
+      repos <- "https://radiant-rstats.github.io/minicran/"
+    }
+  }
 
   ## remove old sessions directory
   unlink("~/radiant.sessions", recursive = TRUE, force = TRUE)
   ## cleanup old session files
-  unlink("~/.radiant.sessions/*.rds", force = TRUE)
+  unlink("~/.radiant.sessions/*.state.rda", force = TRUE)
 
   ## https://stackoverflow.com/questions/50422627/different-results-from-deparse-in-r-3-4-4-and-r-3-5
   dctrl <- if (getRversion() > "3.4.4") c("keepNA", "niceNames") else "keepNA"
@@ -138,9 +147,6 @@ sync_packages <- function(
   if (is.null(Sys.getenv("RSTUDIO")) && length(sessionInfo()$otherPkgs) > 0) {
     message("Some packages are already loaded. Please restart R and run radiant.update::sync_packages() again")
   } else {
-    if (dev) {
-      repos <- c(repos, "https://radiant-rstats.github.io/minicran/dev")
-    }
     if (missing(type)) {
       os_type <- Sys.info()["sysname"]
       type <- ifelse(os_type %in% c("Windows", "Darwin"), "binary", "source")
@@ -197,3 +203,32 @@ sync_packages <- function(
 }
 
 
+#' Check which packages are installed in a user's local packages directory
+#'
+#' @export
+user_packages <- function() {
+  local <- Sys.getenv("R_LIBS_USER")
+  ipn <- c()
+  if (dir.exists(local)) {
+    ip <- installed.packages()
+    ipn <- names(ip[,"Package"])[ip[,"LibPath"] == local]
+    ipv <- ip[,"Version"][ip[,"LibPath"] == local]
+    if (length(ipn) == 0) {
+      cat("No user-level local R-packages installed")
+    } else {
+      cat("The following packages are installed locally at the user level\n")
+      cat(paste0(ipn, "_", ipv, collapse = "\n"))
+    }
+  } else {
+    cat("No user-level local R-packages installed")
+  }
+  invisible(list(packages = ipn, local = local))
+}
+
+#' Remove packages that are installed in a user's local packages directory
+#'
+#' @export
+remove_user_packages <- function() {
+  up <- user_packages()
+  remove.packages(up$packages, up$local)
+}
