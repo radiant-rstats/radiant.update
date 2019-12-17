@@ -240,5 +240,3 @@ remove_user_packages <- function() {
     remove.packages(up$packages, up$local)
   }
 }
-
-user_packages()

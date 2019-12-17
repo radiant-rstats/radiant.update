@@ -7,4 +7,4 @@ Contains functions that update Radiant and all required packages.
 
 See `?radiant.update::radiant.update` and `?radiant.update::sync_packages` for additional options
 
-NEWS: As of version 1.2.0 Unbuntu Linux 18.04 syncs with binary packages created through Rstudio Package Manager
+NEWS: As of version 1.3.0 Unbuntu Linux 18.04 syncs with binary packages created through Rstudio Package Manager
