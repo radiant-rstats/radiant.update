@@ -3,10 +3,9 @@
 \docType{package}
 \name{radiant.update}
 \alias{radiant.update}
-\alias{radiant.update-package}
 \title{radiant.update}
 \usage{
-radiant.update(lib.loc = .libPaths()[1], repos = "", type)
+radiant.update(lib.loc = .libPaths()[1], repos = "", type, options = "")
 }
 \arguments{
 \item{lib.loc}{Library to install packages in (see .libPaths())}
@@ -14,11 +13,11 @@ radiant.update(lib.loc = .libPaths()[1], repos = "", type)
 \item{repos}{Repo to update from (default is the radiant repo on GitHub)}
 
 \item{type}{Package type ("binary" or "source"). If missing, will try infer from OS type (i.e., "source" for linux, else "binary")}
+
+\item{options}{Install options as a string to pass to install.packages (e.g., '--no-lock')}
 }
 \description{
-radiant.update
-
-Update Radiant
+Update radiant and dependencies to the latest (supported) versions
 }
 \examples{
 \dontrun{

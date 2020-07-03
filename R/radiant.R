@@ -1,8 +1,12 @@
 #' Update Radiant
 #'
+#' @description Update radiant and dependencies to the latest (supported) versions
+#'
 #' @param lib.loc Library to install packages in (see .libPaths())
 #' @param repos Repo to update from (default is the radiant repo on GitHub)
 #' @param type Package type ("binary" or "source"). If missing, will try infer from OS type (i.e., "source" for linux, else "binary")
+#' @param options Install options as a string to pass to install.packages (e.g., '--no-lock')
+#'
 #'
 #' @examples
 #' \dontrun{
@@ -13,14 +17,15 @@
 radiant.update <- function(
   lib.loc = .libPaths()[1],
   repos = "",
-  type
+  type,
+  options = ""
 ) {
 
   if (repos == "") {
     os <- Sys.info()["sysname"]
     if (os == "Linux") {
       options(HTTPUserAgent = sprintf("R/%s R (%s)", getRversion(), paste(getRversion(), R.version$platform, R.version$arch, R.version$os)))
-      repos <- "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/bionic/latest"
+      repos <- "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/focal/latest"
     } else {
       repos <- "https://radiant-rstats.github.io/minicran/"
     }
@@ -64,11 +69,11 @@ radiant.update <- function(
       to_install <- paste0("c(", paste0("\"", to_install, "\"", collapse = ", "), ")")
       ## needed in case Rstudio wants to restart because package is loaded
       to_run <- paste0(
-        "install.packages(",
-        to_install, ", lib = ",
-        deparse(lib.loc), ", repos = ",
-        deparse(repos, control = dctrl, width.cutoff = 500L), ", type = ",
-        deparse(type),
+        "install.packages(", to_install,
+        ", lib = ", deparse(lib.loc),
+        ", repos = ", deparse(repos, control = dctrl, width.cutoff = 500L),
+        ", type = ", deparse(type),
+        ", INSTALL_opts =", deparse(options),
         "); radiant.check()"
       )
       to_run <- try(eval(parse(text = to_run)), silent = TRUE)
@@ -112,6 +117,7 @@ radiant.check <- function() {
 #' @param lib.loc Library to install packages in (see .libPaths())
 #' @param repos Repo to update from (default is the radiant repo on GitHub)
 #' @param type Package type ("binary" or "source"). If missing, will try infer from OS type (i.e., "source" for linux, else "binary")
+#' @param options Install options as a string to pass to install.packages (e.g., '--no-lock')
 #'
 #' @examples
 #' \dontrun{
@@ -122,14 +128,15 @@ radiant.check <- function() {
 sync_packages <- function(
   lib.loc = .libPaths()[1],
   repos = "",
-  type
+  type,
+  options = ""
 ) {
 
   if (repos == "") {
     os <- Sys.info()["sysname"]
     if (os == "Linux") {
       options(HTTPUserAgent = sprintf("R/%s R (%s)", getRversion(), paste(getRversion(), R.version$platform, R.version$arch, R.version$os)))
-      repos <- "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/bionic/latest"
+      repos <- "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/focal/latest"
     } else {
       repos <- "https://radiant-rstats.github.io/minicran/"
     }
@@ -171,7 +178,9 @@ sync_packages <- function(
         "install.packages(", to_install,
         ", lib = ", deparse(lib.loc),
         ", repos = ", deparse(repos, control = dctrl, width.cutoff = 500L),
-        ", type = \"", type, "\")"
+        ", type = ", deparse(type),
+        ", INSTALL_opts =", deparse(options),
+        "\")"
       )
       try(eval(parse(text = to_run)), silent = TRUE)
     }
