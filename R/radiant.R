@@ -25,9 +25,9 @@ radiant.update <- function(
     os <- Sys.info()["sysname"]
     if (os == "Linux") {
       options(HTTPUserAgent = sprintf("R/%s R (%s)", getRversion(), paste(getRversion(), R.version$platform, R.version$arch, R.version$os)))
-      repos <- "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/focal/latest"
+      repos <- c(RSM = "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/focal/latest", RSPM = "https://packagemanager.rstudio.com/all/__linux__/focal/latest", CRAN = "https://cloud.r-project.org")
     } else {
-      repos <- "https://radiant-rstats.github.io/minicran/"
+      repos <- c(RSM = "https://radiant-rstats.github.io/minicran/", CRAN = "https://cloud.r-project.org")
     }
   }
 
@@ -136,9 +136,9 @@ sync_packages <- function(
     os <- Sys.info()["sysname"]
     if (os == "Linux") {
       options(HTTPUserAgent = sprintf("R/%s R (%s)", getRversion(), paste(getRversion(), R.version$platform, R.version$arch, R.version$os)))
-      repos <- "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/focal/latest"
+      repos <- c(RSM = "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/focal/latest", RSPM = "https://packagemanager.rstudio.com/all/__linux__/focal/latest", CRAN = "https://cloud.r-project.org")
     } else {
-      repos <- "https://radiant-rstats.github.io/minicran/"
+      repos <- c(RSM = "https://radiant-rstats.github.io/minicran/", CRAN = "https://cloud.r-project.org")
     }
   }
 
