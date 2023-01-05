@@ -4,7 +4,7 @@
 \alias{radiant.check}
 \title{Check if the radiant package can be loaded}
 \usage{
-radiant.check()
+radiant.check(type = "update")
 }
 \description{
 Check if the radiant package can be loaded
