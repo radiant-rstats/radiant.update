@@ -14,18 +14,15 @@
 #' }
 #'
 #' @export
-radiant.update <- function(
-  lib.loc = .libPaths()[1],
-  repos = "",
-  type,
-  options = ""
-) {
-
+radiant.update <- function(lib.loc = .libPaths()[1],
+                           repos = "",
+                           type,
+                           options = "") {
   if (repos == "") {
     os <- Sys.info()["sysname"]
     if (os == "Linux") {
       options(HTTPUserAgent = sprintf("R/%s R (%s)", getRversion(), paste(getRversion(), R.version$platform, R.version$arch, R.version$os)))
-      # repos <- c(RSM = "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/focal/latest", RSPM = "https://packagemanager.rstudio.com/all/__linux__/focal/latest", CRAN = "https://cloud.r-project.org")
+      # repos <- c(RSM = "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/focal/latest", RSPM = "https://https://packagemanager.posit.co//all/__linux__/focal/latest", CRAN = "https://cloud.r-project.org")
       repos <- c(RSM = "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/focal/latest")
     } else {
       # repos <- c(RSM = "https://radiant-rstats.github.io/minicran/", CRAN = "https://cloud.r-project.org")
@@ -105,7 +102,7 @@ unload_pkgs <- function() {
 #' Check if the radiant package can be loaded
 #' @export
 radiant.check <- function(type = "update") {
-  message('\nTesting if Radiant can be loaded ...')
+  message("\nTesting if Radiant can be loaded ...")
   ret <- try(eval(parse(text = "suppressMessages(requireNamespace('radiant'))")), silent = TRUE)
   if (isTRUE(ret)) {
     message(paste0("\nRadiant ", type, " was successful\n"))
@@ -127,18 +124,15 @@ radiant.check <- function(type = "update") {
 #' }
 #'
 #' @export
-sync_packages <- function(
-  lib.loc = .libPaths()[1],
-  repos = "",
-  type,
-  options = ""
-) {
-
+sync_packages <- function(lib.loc = .libPaths()[1],
+                          repos = "",
+                          type,
+                          options = "") {
   if (repos == "") {
     os <- Sys.info()["sysname"]
     if (os == "Linux") {
       options(HTTPUserAgent = sprintf("R/%s R (%s)", getRversion(), paste(getRversion(), R.version$platform, R.version$arch, R.version$os)))
-      # repos <- c(RSM = "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/focal/latest", RSPM = "https://packagemanager.rstudio.com/all/__linux__/focal/latest", CRAN = "https://cloud.r-project.org")
+      # repos <- c(RSM = "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/focal/latest", RSPM = "https://https://packagemanager.posit.co//all/__linux__/focal/latest", CRAN = "https://cloud.r-project.org")
       repos <- c(RSM = "https://rsm-compute-01.ucsd.edu:4242/rsm-msba/__linux__/focal/latest")
     } else {
       # repos <- c(RSM = "https://radiant-rstats.github.io/minicran/", CRAN = "https://cloud.r-project.org")
@@ -226,13 +220,13 @@ user_packages <- function() {
   ipn <- c()
   if (dir.exists(local)) {
     ip <- installed.packages()
-    ipl <- ip[,"LibPath"] == normalizePath(local)
-    ipn <- names(ip[,"Package"])[ipl]
+    ipl <- ip[, "LibPath"] == normalizePath(local)
+    ipn <- names(ip[, "Package"])[ipl]
     if (length(ipn) == 0) {
       cat("No user-level local R-packages installed")
     } else {
       cat("The following packages are installed locally at the user level\n")
-      ipv <- ip[,"Version"][ipl]
+      ipv <- ip[, "Version"][ipl]
       cat(paste0(ipn, "_", ipv, collapse = "\n"))
     }
   } else {
